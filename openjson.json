@@ -1,0 +1,242 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sample API",
+    "description": "Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.",
+    "version": "0.1.9"
+  },
+  "paths": {
+    "/camera/image": {
+      "get": {
+        "tags": [
+          "camera"
+        ],
+        "parameters": [
+          {
+            "name": "camera_id",
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "admin_flag",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A jpg image file download",
+            "content": {
+              "image/jpg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camera/list": {
+      "get": {
+        "tags": [
+          "camera"
+        ],
+        "parameters": [
+          {
+            "name": "camera_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of Camera JSON objects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cameras": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Camera"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camera/restart": {
+      "post": {
+        "tags": [
+          "camera"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "camera_id": {
+                    "type": "integer",
+                    "example": 123
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON with message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/system/occupancy": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Current Camera Occupancy Summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 5
+                    },
+                    "total": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "percentage": {
+                      "type": "number",
+                      "example": 0.5
+                    },
+                    "camera_occupancy": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CameraOccupancy"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Camera": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 123
+          },
+          "camera_name": {
+            "type": "string",
+            "example": "test_camera1"
+          },
+          "lot_name": {
+            "type": "string",
+            "example": "lot_name"
+          },
+          "camera_url": {
+            "type": "string",
+            "example": "/url"
+          },
+          "status": {
+            "type": "integer",
+            "example": "status"
+          },
+          "stream_tag": {
+            "type": "string",
+            "enum": [
+              "cv_stream",
+              "https_stream",
+              "snapshot_stream"
+            ]
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Camera 123 restart requested"
+          }
+        }
+      },
+      "CameraOccupancy": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "example": 5
+          },
+          "total": {
+            "type": "integer",
+            "example": 10
+          },
+          "percentage": {
+            "type": "number",
+            "example": 0.5
+          },
+          "camera_name": {
+            "type": "string",
+            "example": "camera_name"
+          },
+          "camera_id": {
+            "type": "integer",
+            "example": 123
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
